@@ -43,7 +43,14 @@ def get_exif(path) -> dict:
     """
     exif_dict = {}
     try:
-        output_bytes = subprocess.check_output([EXIFTOOL_PATH, '-d', '%Y-%m-%d %H:%M:%S%3f%z', path])
+        startup = subprocess.STARTUPINFO()
+        startup.dwFlags = subprocess.STARTF_USESHOWWINDOW
+        startup.wShowWindow = subprocess.SW_HIDE
+        popen = subprocess.Popen([EXIFTOOL_PATH, '-d', '%Y-%m-%d %H:%M:%S%3f%z', path],
+                                 startupinfo=startup, stdout=subprocess.PIPE)
+        output_bytes, err = popen.communicate()
+        # output_bytes = subprocess.check_output([EXIFTOOL_PATH, '-d', '%Y-%m-%d %H:%M:%S%3f%z', path], startupinfo=startup)
+
         output = output_bytes.decode('utf-8', errors='ignore')
 
         lines = output.splitlines()
@@ -68,7 +75,6 @@ def get_exif(path) -> dict:
             exif_dict[key] = value_clean
     except Exception as e:
         logger.error(f'get_exif error: {path} : {e}')
-
     return exif_dict
 
 
