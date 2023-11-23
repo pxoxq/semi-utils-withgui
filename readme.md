@@ -26,6 +26,12 @@
 如果您觉得程序对您有所帮助的话，可以点击 [Sponsor](https://cdn.lsvm.xyz/wechat.jpg) 按钮请原作者喝杯咖啡，谢谢！
 
 
+## 打包 EXE
+
+```commandline
+pyinstaller ./main.spec
+```
+
 ## 原项目开发文档
 
 **[Wiki](../../wiki)**

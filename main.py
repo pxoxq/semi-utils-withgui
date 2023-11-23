@@ -4,7 +4,8 @@ from tkinter import StringVar, Tk, Label, Button, Entry
 from tkinter.filedialog import askdirectory
 from tkinter.messagebox import showerror, showinfo
 from tkinter.ttk import Progressbar
-
+from os import makedirs
+from os.path import exists
 # from tqdm import tqdm
 
 from entity.image_container import ImageContainer
@@ -70,7 +71,9 @@ class PhotoMarker:
 
     def __get_input_dir(self):
         input_path = askdirectory(title="选择图片目录")
-        input_path and self.input_dir.set(input_path)
+        if input_path:
+            self.input_dir.set(input_path)
+            self.out_dir.set(input_path + '/with_logo')
 
     def __check_data(self):
         if not self.input_dir.get():
@@ -103,6 +106,8 @@ class PhotoMarker:
     def __start_make(self):
         if not self.__check_data():
             return
+        if not exists(self.out_dir.get()):
+            makedirs(self.out_dir.get())
         file_list = get_file_list(self.input_dir.get())
         total_files = len(file_list)
         # print('当前共有 {} 张图片待处理'.format(total_files))
@@ -136,6 +141,7 @@ class PhotoMarker:
 
         # 放置进度条、信息提示
         self._toggle_progressbar()
+        self._update_progress(0)
 
         for idx, source_path in enumerate(file_list, 1):
             self.current_img_name.set(f'  [{idx}/{total_files}] | 当前：{source_path.name}')
